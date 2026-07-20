@@ -1,0 +1,120 @@
+managed implementation in class zbp_14_r_travel unique;
+strict ( 2 );
+with draft;
+
+define behavior for Z14_R_Travel alias Travel
+persistent table z14_travel ##UNMAPPED_FIELD
+draft table z14_travel_d
+lock master
+total etag ChangedAt
+etag master LocChangedAt
+early numbering
+authorization master ( instance )
+
+{
+  association _Item { create; with draft; }
+
+  create ( authorization : global );
+  update;
+  delete;
+
+  action cancel_travel;
+
+  determination determineStatus on modify { create; }
+  determination determineDuration on save { field BeginDate, EndDate; }
+
+  validation validateCustomer on save { create; update; field CustomerId; }
+  validation validateBeginDate on save { create; update; field BeginDate; }
+  validation validateEndDate on save { create; update; field EndDate; }
+  validation validateDateSequence on save { create; update; field BeginDate, EndDate; }
+
+
+  determine action checkCustomer
+  {
+    validation validateCustomer;
+  }
+
+  determine action adjustDuration
+  {
+    validation validateBeginDate;
+    validation validateEndDate;
+    validation validateDateSequence;
+
+    determination determineDuration;
+  }
+
+  side effects
+  {
+    determine action checkCustomer
+    executed on field CustomerId
+    affects messages;
+
+    determine action adjustDuration
+    executed on field BeginDate, field EndDate
+    affects field Duration, messages, entity _Item;
+  }
+
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+
+  draft determine action Prepare
+  {
+    validation validateCustomer;
+    validation validateBeginDate;
+    validation validateEndDate;
+    validation validateDateSequence;
+  }
+
+  field ( readonly ) AgencyId, TravelId;
+  field ( readonly ) Duration, Status, ChangedAt, ChangedBy, LocChangedAt;
+  field ( mandatory ) Description, CustomerId, BeginDate, EndDate;
+
+
+  mapping for z14_travel
+    {
+      AgencyId     = agency_id;
+      TravelId     = travel_id;
+      Description  = description;
+      CustomerId   = customer_id;
+      BeginDate    = begin_date;
+      EndDate      = end_date;
+      Status       = status;
+      ChangedAt    = changed_at;
+      ChangedBy    = changed_by;
+      LocChangedAt = loc_changed_at;
+    }
+}
+
+define behavior for Z14_I_TRAVELITEM alias Item
+persistent table z14_tritem
+draft table z14_tritem_d
+lock dependent by _Travel
+authorization dependent by _Travel
+etag master LocChangedAt
+{
+
+  association _Travel { with draft; }
+
+  update;
+  delete;
+  field ( readonly, numbering : managed ) ItemUuid;
+  field ( readonly ) AgencyId, TravelId;
+
+  mapping for z14_tritem
+    {
+      ItemUuid           = item_uuid;
+      AgencyId           = agency_id;
+      TravelId           = travel_id;
+      CarrierId          = carrier_id;
+      ConnectionId       = connection_id;
+      FlightDate         = flight_date;
+      BookingId          = booking_id;
+      PassengerFirstName = passenger_first_name;
+      PassengerLastName  = passenger_last_name;
+      ChangedAt          = changed_at;
+      ChangedBy          = changed_by;
+      LocChangedAt       = loc_changed_at;
+    }
+}

@@ -1,0 +1,56 @@
+@Metadata.layer: #CORE
+@UI.headerInfo:
+ { typeName: 'Flight travel item',
+   typeNamePlural: 'Flight travel items' }
+
+annotate entity Z14_C_TRAVELITEM with
+{
+  @UI.facet: [ { id: 'Booking',
+                 purpose: #STANDARD,
+                 type: #IDENTIFICATION_REFERENCE,
+                 label: 'Travel item',
+                 position: 10
+                  } ]
+  @UI.hidden: true
+  ItemUuid;
+
+  @UI.identification: [ { position: 10 } ]
+  AgencyId;
+
+  @UI.identification: [ { position: 20 } ]
+  TravelId;
+
+  @UI.lineItem: [ { position: 10 } ]
+  @UI.identification: [ { position: 30 } ]
+  CarrierId;
+
+  @UI.lineItem: [ { position: 20 } ]
+  @UI.identification: [ { position: 40 } ]
+  ConnectionId;
+
+  @UI.lineItem: [ { position: 30 } ]
+  @UI.identification: [ { position: 50 } ]
+  FlightDate;
+
+  @UI.lineItem: [ { position: 40 } ]
+  @UI.identification: [ { position: 60 } ]
+  BookingId;
+
+  @UI.lineItem: [ { position: 50 } ]
+  @UI.identification: [ { position: 70 } ]
+  PassengerFirstName;
+
+  @UI.lineItem: [ { position: 60 } ]
+  @UI.identification: [ { position: 80 } ]
+  PassengerLastName;
+
+  @UI.hidden: true
+  ChangedAt;
+
+  @UI.hidden: true
+  ChangedBy;
+
+  @UI.hidden: true
+  LocChangedAt;
+
+}

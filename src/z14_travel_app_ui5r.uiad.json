@@ -1,0 +1,34 @@
+{
+  "formatVersion": "2",
+  "header": {
+    "description": "Exercise for S4D437",
+    "originalLanguage": "en",
+    "abapLanguageVersion": "cloudDevelopment"
+  },
+  "generalInformation": {
+    "appType": "ui5",
+    "catalogId": "SAP_TC_UI5_REPO_UIAD",
+    "targetMappingTitle": "Travel"
+  },
+  "ui5AppDetails": {
+    "appId": "z14_travel_app"
+  },
+  "navigation": {
+    "targetMappingId": "Z14_TRAVEL_APP_UI5R_TM",
+    "semanticObject": "Travel",
+    "action": "manage",
+    "desktop": true,
+    "tablet": true,
+    "phone": true
+  },
+  "tiles": [
+    {
+      "id": "Z14_TRAVEL_APP_UI5R_AL",
+      "tileType": "static",
+      "isDefault": true,
+      "standard": {
+        "title": "Travel"
+      }
+    }
+  ]
+}
