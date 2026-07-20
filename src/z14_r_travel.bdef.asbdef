@@ -65,6 +65,8 @@ authorization master ( instance )
     validation validateBeginDate;
     validation validateEndDate;
     validation validateDateSequence;
+
+    validation Item~validateFlightDate;
   }
 
   field ( readonly ) AgencyId, TravelId;
@@ -99,6 +101,9 @@ etag master LocChangedAt
 
   update;
   delete;
+
+  validation validateFlightDate on save { create; update; field FlightDate; }
+
   field ( readonly, numbering : managed ) ItemUuid;
   field ( readonly ) AgencyId, TravelId;
 

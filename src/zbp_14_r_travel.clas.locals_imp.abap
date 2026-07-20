@@ -1,3 +1,4 @@
+
 CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
   PRIVATE SECTION.
 
@@ -219,3 +220,50 @@ CLASS lhc_Travel IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+CLASS lhc_item DEFINITION INHERITING FROM cl_abap_behavior_handler.
+
+  PRIVATE SECTION.
+
+    METHODS validateFlightDate FOR VALIDATE ON SAVE
+      IMPORTING keys FOR Item~validateFlightDate.
+
+ENDCLASS.
+
+CLASS lhc_item IMPLEMENTATION.
+
+  METHOD validateFlightDate.
+    READ ENTITIES OF Z14_R_Travel IN LOCAL MODE
+    ENTITY Item
+    FIELDS ( FlightDate )
+    WITH CORRESPONDING #( keys )
+    RESULT DATA(lt_items).
+
+    DATA(lv_today) = cl_abap_context_info=>get_system_date( ).
+
+    LOOP AT lt_items ASSIGNING FIELD-SYMBOL(<ls_item>).
+    APPEND VALUE #( %tky = <ls_item>-%tky
+                  %state_area = 'FLIGHT_DATE' ) TO reported-item.
+
+
+      IF <ls_item>-FlightDate < lv_today.
+        APPEND VALUE #( %tky = <ls_item>-%tky ) TO failed-item.
+
+        APPEND VALUE #( %tky = <ls_item>-%tky
+                        %msg = NEW zcm_14_TRAVEL( textid = zcm_14_travel=>flight_date_in_the_past )
+                        %element-FlightDate = if_abap_behv=>mk-on
+                        ) TO reported-Item.
+
+      ELSEIF <ls_item>-FlightDate IS INITIAL.
+       APPEND VALUE #( %tky = <ls_item>-%tky ) TO failed-item.
+
+        APPEND VALUE #( %tky = <ls_item>-%tky
+                        %msg = NEW zcm_14_TRAVEL( textid = zcm_14_travel=>flight_date_empty )
+                        %element-FlightDate = if_abap_behv=>mk-on
+                        ) TO reported-Item.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+ENDCLASS.
+

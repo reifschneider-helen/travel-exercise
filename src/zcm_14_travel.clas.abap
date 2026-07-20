@@ -18,7 +18,7 @@ CLASS zcm_14_travel DEFINITION
 
     CONSTANTS:
       BEGIN OF already_canceled,
-        msgid TYPE symsgid VALUE '/LRN/S4D437',
+        msgid TYPE symsgid VALUE 'Z14_Messages',
         msgno TYPE symsgno VALUE '130',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
@@ -27,7 +27,7 @@ CLASS zcm_14_travel DEFINITION
       END OF already_canceled,
 
       BEGIN OF customer_not_found,
-        msgid TYPE symsgid VALUE '/LRN/S4D437',
+        msgid TYPE symsgid VALUE 'Z14_Messages',
         msgno TYPE symsgno VALUE '210',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
@@ -35,8 +35,26 @@ CLASS zcm_14_travel DEFINITION
         attr4 TYPE scx_attrname VALUE '',
       END OF customer_not_found,
 
+      BEGIN OF flight_date_in_the_past,
+        msgid TYPE symsgid VALUE 'Z14_Messages',
+        msgno TYPE symsgno VALUE '310',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF flight_date_in_the_past,
+
+        BEGIN OF flight_date_empty,
+        msgid TYPE symsgid VALUE 'Z14_Messages',
+        msgno TYPE symsgno VALUE '311',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF flight_date_empty,
+
       BEGIN OF start_date_in_the_past,
-        msgid TYPE symsgid VALUE '/LRN/S4D437',
+        msgid TYPE symsgid VALUE 'Z14_Messages',
         msgno TYPE symsgno VALUE '230',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
@@ -45,7 +63,7 @@ CLASS zcm_14_travel DEFINITION
       END OF start_date_in_the_past,
 
       BEGIN OF end_date_in_the_past,
-        msgid TYPE symsgid VALUE '/LRN/S4D437',
+        msgid TYPE symsgid VALUE 'Z14_Messages',
         msgno TYPE symsgno VALUE '240',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
@@ -54,7 +72,7 @@ CLASS zcm_14_travel DEFINITION
       END OF end_date_in_the_past,
 
       BEGIN OF wrong_date_sequence,
-        msgid TYPE symsgid VALUE '/LRN/S4D437',
+        msgid TYPE symsgid VALUE 'Z14_Messages',
         msgno TYPE symsgno VALUE '220',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
