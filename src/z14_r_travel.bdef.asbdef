@@ -89,6 +89,7 @@ authorization master ( instance )
 }
 
 define behavior for Z14_I_TRAVELITEM alias Item
+implementation in class ZBP_14_R_TRAVELITEM unique
 persistent table z14_tritem
 draft table z14_tritem_d
 lock dependent by _Travel
@@ -100,6 +101,8 @@ etag master LocChangedAt
 
   update;
   delete;
+
+  determination determineTravelDates on save { field FlightDate; }
 
   validation validateFlightDate on save { create; update; field FlightDate; }
 
