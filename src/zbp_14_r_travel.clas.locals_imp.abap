@@ -1,6 +1,11 @@
 
 CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
   PRIVATE SECTION.
+    CONSTANTS:
+      c_state_area_customer     TYPE string VALUE 'VALIDATE_CUSTOMER',
+      c_state_area_begin_date   TYPE string VALUE 'VALIDATE_BEGIN_DATE',
+      c_state_area_end_date     TYPE string VALUE 'VALIDATE_END_DATE',
+      c_state_area_date_seqence TYPE string VALUE 'VALIDATE_DATE_SEQUENCE'.
 
     METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
       IMPORTING keys REQUEST requested_authorizations FOR Travel RESULT result.
@@ -145,11 +150,15 @@ CLASS lhc_Travel IMPLEMENTATION.
 
 
     LOOP AT lt_travels ASSIGNING FIELD-SYMBOL(<ls_travel>).
+      APPEND VALUE #( %tky = <ls_travel>-%tky
+                      %state_area = c_state_area_customer ) TO reported-travel.
+
       IF lo_customer->customer_exists( <ls_travel>-CustomerId ) = abap_false.
 
         APPEND VALUE #( %tky = <ls_travel>-%tky ) TO failed-travel.
 
         APPEND VALUE #( %tky = <ls_travel>-%tky
+                        %state_area = c_state_area_customer
                         %msg = NEW zcm_14_travel(
                                     textid = zcm_14_travel=>customer_not_found )
                         %element-CustomerId = if_abap_behv=>mk-on
@@ -168,9 +177,14 @@ CLASS lhc_Travel IMPLEMENTATION.
     DATA(lv_today) = cl_abap_context_info=>get_system_date( ).
 
     LOOP AT lt_travels ASSIGNING FIELD-SYMBOL(<ls_travel>).
+      APPEND VALUE #( %tky = <ls_travel>-%tky
+                  %state_area = c_state_area_begin_date
+                     ) TO reported-travel.
+
       IF <ls_travel>-BeginDate < lv_today.
         APPEND VALUE #( %tky = <ls_travel>-%tky ) TO failed-travel.
         APPEND VALUE #( %tky = <ls_travel>-%tky
+                        %state_area = c_state_area_begin_date
                         %msg = NEW zcm_14_travel(
                                 textid = zcm_14_travel=>start_date_in_the_past )
                         %element-BeginDate = if_abap_behv=>mk-on ) TO reported-travel.
@@ -189,9 +203,14 @@ CLASS lhc_Travel IMPLEMENTATION.
     DATA(lv_today) = cl_abap_context_info=>get_system_date( ).
 
     LOOP AT lt_travels ASSIGNING FIELD-SYMBOL(<ls_travel>).
+      APPEND VALUE #( %tky = <ls_travel>-%tky
+                  %state_area = c_state_area_end_date
+                    ) TO reported-travel.
+
       IF <ls_travel>-EndDate < lv_today.
         APPEND VALUE #( %tky = <ls_travel>-%tky ) TO failed-travel.
         APPEND VALUE #( %tky = <ls_travel>-%tky
+                        %state_area = c_state_area_end_date
                         %msg = NEW zcm_14_travel(
                                 textid = zcm_14_travel=>end_date_in_the_past )
                         %element-EndDate = if_abap_behv=>mk-on ) TO reported-travel.
@@ -207,9 +226,14 @@ CLASS lhc_Travel IMPLEMENTATION.
     RESULT DATA(lt_travels).
 
     LOOP AT lt_travels ASSIGNING FIELD-SYMBOL(<ls_travel>).
+      APPEND VALUE #( %tky = <ls_travel>-%tky
+                        %state_area = c_state_area_date_seqence
+                    ) TO reported-travel.
+
       IF <ls_travel>-BeginDate > <ls_travel>-EndDate.
         APPEND VALUE #( %tky = <ls_travel>-%tky  ) TO failed-travel.
         APPEND VALUE #( %tky = <ls_travel>-%tky
+                        %state_area = c_state_area_date_seqence
                         %msg = NEW zcm_14_travel(
                             textid = zcm_14_travel=>wrong_date_sequence )
                         %element-BeginDate = if_abap_behv=>mk-on
@@ -218,12 +242,12 @@ CLASS lhc_Travel IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
-
 ENDCLASS.
 
 CLASS lhc_item DEFINITION INHERITING FROM cl_abap_behavior_handler.
 
   PRIVATE SECTION.
+    CONSTANTS: c_state_area_item_flight_date TYPE string VALUE 'ITEM_VALIDATE_FLIGHT_DATE'.
 
     METHODS validateFlightDate FOR VALIDATE ON SAVE
       IMPORTING keys FOR Item~validateFlightDate.
@@ -235,35 +259,38 @@ CLASS lhc_item IMPLEMENTATION.
   METHOD validateFlightDate.
     READ ENTITIES OF Z14_R_Travel IN LOCAL MODE
     ENTITY Item
-    FIELDS ( FlightDate )
+    FIELDS ( TravelId AgencyId FlightDate )
     WITH CORRESPONDING #( keys )
     RESULT DATA(lt_items).
 
     DATA(lv_today) = cl_abap_context_info=>get_system_date( ).
 
     LOOP AT lt_items ASSIGNING FIELD-SYMBOL(<ls_item>).
-    APPEND VALUE #( %tky = <ls_item>-%tky
-                  %state_area = 'FLIGHT_DATE' ) TO reported-item.
+      APPEND VALUE #( %tky = <ls_item>-%tky
+                      %state_area = c_state_area_item_flight_date
+                      %path = CORRESPONDING #(  <ls_item> ) ) TO reported-item.
 
-
-      IF <ls_item>-FlightDate < lv_today.
+      IF <ls_item>-FlightDate IS INITIAL.
         APPEND VALUE #( %tky = <ls_item>-%tky ) TO failed-item.
 
         APPEND VALUE #( %tky = <ls_item>-%tky
-                        %msg = NEW zcm_14_TRAVEL( textid = zcm_14_travel=>flight_date_in_the_past )
-                        %element-FlightDate = if_abap_behv=>mk-on
-                        ) TO reported-Item.
-
-      ELSEIF <ls_item>-FlightDate IS INITIAL.
-       APPEND VALUE #( %tky = <ls_item>-%tky ) TO failed-item.
-
-        APPEND VALUE #( %tky = <ls_item>-%tky
+                        %state_area = c_state_area_item_flight_date
                         %msg = NEW zcm_14_TRAVEL( textid = zcm_14_travel=>flight_date_empty )
                         %element-FlightDate = if_abap_behv=>mk-on
+                        %path-travel        = CORRESPONDING #( <ls_item> )
+                        ) TO reported-Item.
+
+      ELSEIF <ls_item>-FlightDate < lv_today.
+        APPEND VALUE #( %tky = <ls_item>-%tky ) TO failed-item.
+
+        APPEND VALUE #( %tky = <ls_item>-%tky
+                        %state_area = c_state_area_item_flight_date
+                        %msg = NEW zcm_14_TRAVEL( textid = zcm_14_travel=>flight_date_in_the_past )
+                        %element-FlightDate = if_abap_behv=>mk-on
+                        %path-travel        = CORRESPONDING #( <ls_item> )
                         ) TO reported-Item.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
-
 ENDCLASS.
 

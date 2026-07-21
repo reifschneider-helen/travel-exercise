@@ -18,7 +18,7 @@ CLASS zcm_14_travel DEFINITION
 
     CONSTANTS:
       BEGIN OF already_canceled,
-        msgid TYPE symsgid VALUE 'Z14_Messages',
+        msgid TYPE symsgid VALUE 'Z14_MESSAGES',
         msgno TYPE symsgno VALUE '130',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
@@ -27,7 +27,7 @@ CLASS zcm_14_travel DEFINITION
       END OF already_canceled,
 
       BEGIN OF customer_not_found,
-        msgid TYPE symsgid VALUE 'Z14_Messages',
+        msgid TYPE symsgid VALUE 'Z14_MESSAGES',
         msgno TYPE symsgno VALUE '210',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
@@ -36,7 +36,7 @@ CLASS zcm_14_travel DEFINITION
       END OF customer_not_found,
 
       BEGIN OF flight_date_in_the_past,
-        msgid TYPE symsgid VALUE 'Z14_Messages',
+        msgid TYPE symsgid VALUE 'Z14_MESSAGES',
         msgno TYPE symsgno VALUE '310',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
@@ -45,7 +45,7 @@ CLASS zcm_14_travel DEFINITION
       END OF flight_date_in_the_past,
 
         BEGIN OF flight_date_empty,
-        msgid TYPE symsgid VALUE 'Z14_Messages',
+        msgid TYPE symsgid VALUE 'Z14_MESSAGES',
         msgno TYPE symsgno VALUE '311',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
@@ -54,7 +54,7 @@ CLASS zcm_14_travel DEFINITION
       END OF flight_date_empty,
 
       BEGIN OF start_date_in_the_past,
-        msgid TYPE symsgid VALUE 'Z14_Messages',
+        msgid TYPE symsgid VALUE 'Z14_MESSAGES',
         msgno TYPE symsgno VALUE '230',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
@@ -63,7 +63,7 @@ CLASS zcm_14_travel DEFINITION
       END OF start_date_in_the_past,
 
       BEGIN OF end_date_in_the_past,
-        msgid TYPE symsgid VALUE 'Z14_Messages',
+        msgid TYPE symsgid VALUE 'Z14_MESSAGES',
         msgno TYPE symsgno VALUE '240',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
@@ -72,7 +72,7 @@ CLASS zcm_14_travel DEFINITION
       END OF end_date_in_the_past,
 
       BEGIN OF wrong_date_sequence,
-        msgid TYPE symsgid VALUE 'Z14_Messages',
+        msgid TYPE symsgid VALUE 'Z14_MESSAGES',
         msgno TYPE symsgno VALUE '220',
         attr1 TYPE scx_attrname VALUE '',
         attr2 TYPE scx_attrname VALUE '',
@@ -87,8 +87,8 @@ ENDCLASS.
 
 CLASS zcm_14_travel IMPLEMENTATION.
   METHOD constructor ##ADT_SUPPRESS_GENERATION.
-    super->constructor(
-    ).
+    super->constructor( ).
+
     CLEAR me->textid.
     IF textid IS INITIAL.
       if_t100_message~t100key = if_t100_message=>default_textid.

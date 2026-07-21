@@ -28,7 +28,6 @@ authorization master ( instance )
   validation validateEndDate on save { create; update; field EndDate; }
   validation validateDateSequence on save { create; update; field BeginDate, EndDate; }
 
-
   determine action checkCustomer
   {
     validation validateCustomer;
