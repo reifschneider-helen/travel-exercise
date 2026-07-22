@@ -1,0 +1,4 @@
+@EndUserText.label: 'Flight booking Class'
+define service Z14_CLASS {
+  expose Z14_R_Class;
+}

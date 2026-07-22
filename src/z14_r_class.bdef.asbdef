@@ -1,0 +1,21 @@
+unmanaged implementation in class zbp_14_r_class unique;
+strict ( 2 );
+
+define behavior for Z14_R_Class alias Class
+//late numbering
+lock master
+authorization master ( instance )
+etag master AllElements
+{
+  create ( authorization : global );
+  update;
+  delete;
+
+  field ( readonly: update ) ClassID;
+
+  mapping for z14_flclass
+  control z14_s_classx corresponding
+  {
+    ClassID = class_id;
+  }
+}

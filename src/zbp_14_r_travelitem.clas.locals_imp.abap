@@ -16,7 +16,7 @@ CLASS lhc_Item IMPLEMENTATION.
   METHOD determineTravelDates.
     READ ENTITIES OF Z14_R_Travel IN LOCAL MODE
     ENTITY Item
-    FIELDS ( TravelId AgencyId FlightDate )
+    FIELDS ( FlightDate )
     WITH CORRESPONDING #( keys )
     RESULT DATA(lt_items)
 
