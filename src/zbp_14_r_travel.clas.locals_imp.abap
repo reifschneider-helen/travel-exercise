@@ -1,4 +1,3 @@
-
 CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
   PRIVATE SECTION.
     CONSTANTS:
@@ -243,3 +242,76 @@ CLASS lhc_Travel IMPLEMENTATION.
     ENDLOOP.
   ENDMETHOD.
 ENDCLASS.
+
+CLASS lsc_z14_r_travel DEFINITION INHERITING FROM cl_abap_behavior_saver.
+
+  PROTECTED SECTION.
+    METHODS save_modified REDEFINITION.
+
+  PRIVATE SECTION.
+    METHODS map_message IMPORTING i_msg         TYPE symsg
+                        RETURNING VALUE(rv_msg) TYPE REF TO if_abap_behv_message.
+
+ENDCLASS.
+
+CLASS lsc_z14_r_travel IMPLEMENTATION.
+
+  METHOD save_modified.
+    DATA(lo_model) = NEW z14_cl_s4d437_tritem( i_table_name = 'Z14_TRITEM' ).
+
+    LOOP AT delete-item ASSIGNING FIELD-SYMBOL(<ls_item_d>).
+      DATA(msg_d) = lo_model->delete_item( i_uuid = <ls_item_d>-itemUuid ).
+
+      IF msg_d IS NOT INITIAL.
+        APPEND VALUE #( %tky-itemUuid = <ls_item_d>-itemUuid
+                        %msg = map_message( i_msg = msg_d )
+                         ) TO reported-item.
+      ENDIF.
+    ENDLOOP.
+
+    LOOP AT create-item ASSIGNING FIELD-SYMBOL(<ls_item_c>).
+      DATA(msg_c) = lo_model->create_item( i_item = CORRESPONDING #( <ls_item_c>
+                                                      MAPPING FROM ENTITY ) ).
+
+      IF msg_c IS NOT INITIAL.
+        APPEND VALUE #( %tky-itemUuid = <ls_item_c>-itemUuid
+                        %msg = map_message( i_msg = msg_c )
+                         ) TO reported-item.
+      ENDIF.
+    ENDLOOP.
+
+    LOOP AT update-item ASSIGNING FIELD-SYMBOL(<ls_item_u>).
+      DATA(msg_u) = lo_model->update_item( i_item = CORRESPONDING #( <ls_item_u>
+                                                      MAPPING FROM ENTITY )
+                             i_itemx =  CORRESPONDING #( <ls_item_u> MAPPING FROM ENTITY
+                                                          USING CONTROL )
+                              ).
+
+      IF msg_u IS NOT INITIAL.
+        APPEND VALUE #( %tky-itemUuid = <ls_item_u>-itemUuid
+                        %msg = map_message( i_msg = msg_u )
+                        ) TO reported-item.
+      ENDIF.
+
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD map_message.
+    DATA(severity) = SWITCH #( i_msg-msgty
+                        WHEN 'S' THEN if_abap_behv_message=>severity-success
+                        WHEN 'E' THEN if_abap_behv_message=>severity-error
+                        WHEN 'I' THEN if_abap_behv_message=>severity-information
+                        WHEN 'W' THEN if_abap_behv_message=>severity-warning
+                        ELSE if_abap_behv_message=>severity-none ).
+
+    rv_msg = new_message( id       = i_msg-msgid
+                          number   = i_msg-msgno
+                          severity = severity
+                          v1       = i_msg-msgv1
+                          v2       = i_msg-msgv2
+                          v3       = i_msg-msgv3
+                          v4       = i_msg-msgv4 ).
+  ENDMETHOD.
+
+ENDCLASS.
+

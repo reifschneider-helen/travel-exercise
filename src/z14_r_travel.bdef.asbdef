@@ -90,7 +90,8 @@ authorization master ( instance )
 
 define behavior for Z14_I_TRAVELITEM alias Item
 implementation in class ZBP_14_R_TRAVELITEM unique
-persistent table z14_tritem
+with unmanaged save
+//persistent table z14_tritem
 draft table z14_tritem_d
 lock dependent by _Travel
 authorization dependent by _Travel
@@ -109,7 +110,9 @@ etag master LocChangedAt
   field ( readonly, numbering : managed ) ItemUuid;
   field ( readonly ) AgencyId, TravelId;
 
-  mapping for z14_tritem
+  mapping for z14_s_tritem
+  control z14_s_tritemx
+  corresponding
     {
       ItemUuid           = item_uuid;
       AgencyId           = agency_id;
