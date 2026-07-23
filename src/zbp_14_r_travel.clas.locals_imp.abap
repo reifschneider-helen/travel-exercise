@@ -294,6 +294,13 @@ CLASS lsc_z14_r_travel IMPLEMENTATION.
       ENDIF.
 
     ENDLOOP.
+
+*    for the action TravelCreated
+    IF create-travel IS NOT INITIAL.
+        RAISE ENTITY EVENT Z14_R_Travel~TravelCreated
+        FROM CORRESPONDING #( create-travel ).
+    ENDIF.
+
   ENDMETHOD.
 
   METHOD map_message.

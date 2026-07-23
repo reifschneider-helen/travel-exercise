@@ -1,0 +1,33 @@
+managed implementation in class zbp_14_r_travellog unique;
+strict ( 2 );
+
+define behavior for Z14_R_TRAVELLOG alias TravelLog
+persistent table z14_trlog
+lock master
+authorization master ( global )
+etag master LocChangedAt
+{
+
+  field ( readonly, numbering : managed )
+  UUID;
+
+  field ( readonly )
+  ChangedAt,
+  ChangedBy,
+  LocChangedAt;
+
+  create;
+  update;
+  delete;
+
+  mapping for z14_trlog
+    {
+      UUID         = uuid;
+      AgencyID     = agency_id;
+      TravelID     = travel_id;
+      Origin       = origin;
+      ChangedAt    = changed_at;
+      ChangedBy    = changed_by;
+      LocChangedAt = loc_changed_at;
+    }
+}

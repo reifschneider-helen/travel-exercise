@@ -1,0 +1,4 @@
+@EndUserText.label: 'Travel Logs'
+define service Z14_LOG {
+  expose Z14_C_TRAVELLOG;
+}

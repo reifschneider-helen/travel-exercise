@@ -10,6 +10,7 @@ total etag ChangedAt
 etag master LocChangedAt
 early numbering
 authorization master ( instance )
+with additional save
 
 {
   association _Item { create; with draft; }
@@ -19,6 +20,8 @@ authorization master ( instance )
   delete;
 
   action cancel_travel;
+
+  event TravelCreated;
 
   determination determineStatus on modify { create; }
   determination determineDuration on save { field BeginDate, EndDate; }
