@@ -22,8 +22,8 @@ define view entity Z14_C_TRAVELITEM
                              element: 'ConnectionID'
                            },
                    additionalBinding:
-                        [ { localElement: 'CarrierID',
-                                 element: 'CarrierID',
+                        [ { localElement: 'CarrierId',
+                                 element: 'AirlineID',
                                    usage: #FILTER_AND_RESULT
                           }
                         ],
@@ -33,8 +33,8 @@ define view entity Z14_C_TRAVELITEM
                              element: 'ConnectionID'
                            },
                    additionalBinding:
-                        [ { localElement: 'CarrierID',
-                            element:      'CarrierID',
+                        [ { localElement: 'CarrierId',
+                            element:      'AirlineID',
                             usage:        #FILTER_AND_RESULT
                           },
                           { localElement: 'FlightDate',
@@ -53,11 +53,11 @@ define view entity Z14_C_TRAVELITEM
                          element: 'FlightDate'
                        },
                additionalBinding:
-                    [ { localElement: 'CarrierID',
-                        element:      'CarrierID',
+                    [ { localElement: 'CarrierId',
+                        element:      'AirlineID',
                         usage:         #FILTER_AND_RESULT
                       },
-                      { localElement: 'ConnectionID',
+                      { localElement: 'ConnectionId',
                         element:      'ConnectionID',
                         usage:        #RESULT
                       }

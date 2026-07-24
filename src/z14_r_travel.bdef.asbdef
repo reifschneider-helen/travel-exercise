@@ -21,7 +21,7 @@ with additional save
 
   action cancel_travel;
 
-  event TravelCreated;
+  event TravelCreated parameter z14_a_event;
 
   determination determineStatus on modify { create; }
   determination determineDuration on save { field BeginDate, EndDate; }

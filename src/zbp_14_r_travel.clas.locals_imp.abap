@@ -295,10 +295,17 @@ CLASS lsc_z14_r_travel IMPLEMENTATION.
 
     ENDLOOP.
 
-*    for the action TravelCreated
+*    for the business event TravelCreated
     IF create-travel IS NOT INITIAL.
+    DATA event_in TYPE TABLE FOR EVENT Z14_R_Travel~TravelCreated.
+
+        LOOP AT create-travel ASSIGNING FIELD-SYMBOL(<ls_new_travel>).
+            APPEND VALUE #( AgencyId = <ls_new_travel>-AgencyId
+                            TravelId = <ls_new_travel>-TravelId
+                            origin = 'Z14_R_Travel' ) TO event_in.
+        ENDLOOP.
         RAISE ENTITY EVENT Z14_R_Travel~TravelCreated
-        FROM CORRESPONDING #( create-travel ).
+        FROM event_in.
     ENDIF.
 
   ENDMETHOD.
