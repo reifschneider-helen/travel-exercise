@@ -1,0 +1,9 @@
+@Metadata.layer: #CUSTOMER
+annotate entity Z14_C_TRAVELITEM
+    with 
+{
+    @UI.lineItem: [ { position: 65 } ]
+    @UI.identification: [ { position: 65 } ]
+    ZZClassZ14;
+    
+}

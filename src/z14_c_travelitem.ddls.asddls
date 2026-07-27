@@ -1,9 +1,15 @@
+@AbapCatalog.extensibility: {
+    extensible: true,
+    allowNewDatasources: false,
+    dataSources: ['Item'],
+    elementSuffix: 'Z14'
+    }
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Item consumption'
 @Metadata.ignorePropagatedAnnotations: true
 @Metadata.allowExtensions: true
 define view entity Z14_C_TRAVELITEM
-  as projection on Z14_I_TRAVELITEM
+  as projection on Z14_I_TRAVELITEM as Item
 {
   key ItemUuid,
       AgencyId,

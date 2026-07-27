@@ -1,4 +1,10 @@
-@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AbapCatalog.extensibility: {
+    extensible: true,
+    allowNewDatasources: false,
+    dataSources: ['_Extension'],
+    elementSuffix: 'Z14'
+    }
+@AbapCatalog.viewEnhancementCategory: [#PROJECTION_LIST]
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Fllight travel item'
 @Metadata.ignorePropagatedAnnotations: true
@@ -6,6 +12,9 @@ define view entity Z14_I_TRAVELITEM
   as select from z14_tritem
   association to parent Z14_R_Travel as _Travel on  $projection.TravelId = _Travel.TravelId
                                                 and $projection.AgencyId = _Travel.AgencyId
+  
+  association to Z14_E_TravelItem as _Extension
+                 on $projection.ItemUuid = _Extension.ItemUuid
 {
   key item_uuid            as ItemUuid,
       agency_id            as AgencyId,
@@ -23,5 +32,6 @@ define view entity Z14_I_TRAVELITEM
       @Semantics.systemDateTime.localInstanceLastChangedAt: true
       loc_changed_at       as LocChangedAt,
 
-      _Travel
+      _Travel,
+      _Extension
 }
