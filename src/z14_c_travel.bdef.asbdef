@@ -1,9 +1,12 @@
 projection;
 strict ( 2 );
 use draft;
+use side effects;
+extensible;
 
 define behavior for Z14_C_Travel alias Travel
 use etag
+
 { use association _Item { create; with draft; }
 
   use create;
@@ -21,6 +24,7 @@ use etag
 
 define behavior for Z14_C_TravelItem alias Item
 use etag
+extensible
 {  use association _Travel { with draft; }
 
     use update;
