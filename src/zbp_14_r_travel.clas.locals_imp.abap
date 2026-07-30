@@ -67,12 +67,18 @@ CLASS lhc_Travel IMPLEMENTATION.
   METHOD earlynumbering_create.
     DATA(agencyid) = /lrn/cl_s4d437_model=>get_agency_by_user(  ).
 
-    mapped-travel = CORRESPONDING #( entities ).
+*    mapped-travel = CORRESPONDING #( entities ).
 
-    LOOP AT mapped-travel ASSIGNING FIELD-SYMBOL(<ls_travel>).
-      <ls_travel>-agencyId = agencyid.
-      <ls_travel>-travelId = /lrn/cl_s4d437_model=>get_next_travelid(  ).
-    ENDLOOP.
+*    LOOP AT mapped-travel ASSIGNING FIELD-SYMBOL(<ls_travel>).
+*      <ls_travel>-agencyId = agencyid.
+*      <ls_travel>-travelId = /lrn/cl_s4d437_model=>get_next_travelid(  ).
+*    ENDLOOP.
+
+    mapped-travel = VALUE #( FOR entity IN entities (
+                            VALUE #( BASE CORRESPONDING #( entity )
+                            agencyId = agencyid
+                            travelId = /lrn/cl_s4d437_model=>get_next_travelid(  )
+                            ) ) ).
   ENDMETHOD.
 
   METHOD get_instance_features.
@@ -99,7 +105,7 @@ CLASS lhc_Travel IMPLEMENTATION.
     UPDATE
     FIELDS ( Status )
     WITH VALUE #( FOR key IN keys ( %tky =  key-%tky
-                  status = 'C' ) ).
+                                     status = 'C' ) ).
 
     READ ENTITIES OF Z14_R_Travel IN LOCAL MODE
     ENTITY travel
@@ -128,9 +134,9 @@ CLASS lhc_Travel IMPLEMENTATION.
     MODIFY ENTITIES OF z14_r_travel IN LOCAL MODE
     ENTITY travel
     UPDATE FIELDS ( status )
-        WITH VALUE #( FOR ls_travel IN lt_travels (
-                       %tky = ls_travel-%tky
-                       status = 'N' ) )
+    WITH VALUE #( FOR ls_travel IN lt_travels (
+                      %tky = ls_travel-%tky
+                      status = 'N' ) )
     REPORTED DATA(lt_reported).
 
     reported-travel = CORRESPONDING #( lt_reported-travel ).
@@ -144,13 +150,23 @@ CLASS lhc_Travel IMPLEMENTATION.
     WITH CORRESPONDING #( keys )
     RESULT DATA(lt_travels).
 
-    LOOP AT lt_travels ASSIGNING FIELD-SYMBOL(<ls_travel>).
-      <ls_travel>-duration = <ls_travel>-EndDate - <ls_travel>-BeginDate.
-    ENDLOOP.
+*    LOOP AT lt_travels ASSIGNING FIELD-SYMBOL(<ls_travel>).
+*      <ls_travel>-duration = <ls_travel>-EndDate - <ls_travel>-BeginDate.
+*    ENDLOOP.
+*
+*    MODIFY ENTITIES OF z14_r_travel IN LOCAL MODE
+*    ENTITY Travel
+*    UPDATE FIELDS ( Duration )
+*    WITH CORRESPONDING #( lt_travels ).
 
     MODIFY ENTITIES OF z14_r_travel IN LOCAL MODE
     ENTITY Travel
-    UPDATE FIELDS ( Duration ) WITH CORRESPONDING #( lt_travels ).
+    UPDATE FIELDS ( Duration )
+    WITH VALUE #( FOR travel IN lt_travels (
+                    %tky = travel-%tky
+                    Duration = travel-EndDate - travel-BeginDate
+                 ) ).
+
   ENDMETHOD.
 
   METHOD validateCustomer.
