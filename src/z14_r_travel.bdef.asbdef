@@ -26,7 +26,7 @@ extensible
   update;
   delete;
 
-  action cancel_travel;
+  action ( features: instance ) cancel_travel result [1] $self ;
 
   event TravelCreated parameter z14_a_event;
 

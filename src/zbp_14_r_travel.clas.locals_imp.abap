@@ -15,8 +15,11 @@ CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
     METHODS earlynumbering_create FOR NUMBERING
       IMPORTING entities FOR CREATE Travel.
 
+    METHODS get_instance_features FOR INSTANCE FEATURES
+      IMPORTING keys REQUEST requested_features FOR Travel RESULT result.
+
     METHODS cancel_travel FOR MODIFY
-      IMPORTING keys FOR ACTION Travel~cancel_travel.
+      IMPORTING keys FOR ACTION Travel~cancel_travel RESULT result.
 
     METHODS determineStatus FOR DETERMINE ON MODIFY
       IMPORTING keys FOR Travel~determineStatus.
@@ -35,6 +38,7 @@ CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
 
     METHODS validateDateSequence FOR VALIDATE ON SAVE
       IMPORTING keys FOR Travel~validateDateSequence.
+
 
 ENDCLASS.
 
@@ -71,32 +75,43 @@ CLASS lhc_Travel IMPLEMENTATION.
     ENDLOOP.
   ENDMETHOD.
 
+  METHOD get_instance_features.
+    READ ENTITIES OF Z14_R_Travel IN LOCAL MODE
+    ENTITY travel
+    FIELDS ( Status )
+    WITH CORRESPONDING #( keys )
+    RESULT DATA(lt_travels)
+    FAILED DATA(lt_failed).
+
+    result = VALUE #( FOR ls_travel IN lt_travels (
+                     %tky = ls_travel-%tky
+                     %action-cancel_travel = COND #(
+                                WHEN ls_travel-Status = 'C'
+                                    THEN if_abap_behv=>fc-o-disabled
+                                ELSE if_abap_behv=>fc-o-enabled
+                                )
+                      ) ).
+  ENDMETHOD.
+
   METHOD cancel_travel.
+    MODIFY ENTITIES OF Z14_R_Travel IN LOCAL MODE
+    ENTITY travel
+    UPDATE
+    FIELDS ( Status )
+    WITH VALUE #( FOR key IN keys ( %tky =  key-%tky
+                  status = 'C' ) ).
+
     READ ENTITIES OF Z14_R_Travel IN LOCAL MODE
     ENTITY travel
     ALL FIELDS
     WITH CORRESPONDING #( keys )
-    RESULT DATA(ls_travels).
+    RESULT DATA(lt_travels).
 
-    LOOP AT ls_travels ASSIGNING FIELD-SYMBOL(<lv_travel>).
-      IF <lv_travel>-status <> 'C'.
-        MODIFY ENTITIES OF Z14_R_Travel IN LOCAL MODE
-        ENTITY travel
-        UPDATE
-        FIELDS ( Status )
-        WITH VALUE #( ( %tky =  <lv_travel>-%tky
-                      status = 'C' )
-                       ).
-      ELSE.
-        APPEND VALUE #( %tky =  <lv_travel>-%tky ) TO failed-travel.
+    result = VALUE #( FOR ls_travel IN lt_travels (
+                     %tky = ls_travel-%tky
+                     %param = ls_travel
+                     ) ).
 
-        APPEND VALUE #(  %tky =  <lv_travel>-%tky
-                           %msg = NEW zcm_14_travel(
-                                         textid = zcm_14_travel=>already_canceled
-                                         )
-                         )   TO reported-travel.
-      ENDIF.
-    ENDLOOP.
   ENDMETHOD.
 
   METHOD determineStatus.
@@ -241,6 +256,7 @@ CLASS lhc_Travel IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
+
 ENDCLASS.
 
 CLASS lsc_z14_r_travel DEFINITION INHERITING FROM cl_abap_behavior_saver.
