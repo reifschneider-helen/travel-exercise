@@ -4,9 +4,12 @@ CLASS zcl_14_customer_service DEFINITION
   CREATE PUBLIC .
 
   PUBLIC SECTION.
-  methods:
-    customer_exists IMPORTING iv_customer_id TYPE /dmo/customer_id
-                    RETURNING VALUE(rv_exists) TYPE abap_bool.
+    TYPES:
+        tt_customer_ids TYPE STANDARD TABLE OF /dmo/customer_id WITH DEFAULT KEY.
+
+    METHODS:
+      filter_existing_customers IMPORTING it_customer_ids     TYPE tt_customer_ids
+                                RETURNING VALUE(rt_valid_ids) TYPE tt_customer_ids.
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
@@ -15,16 +18,14 @@ ENDCLASS.
 
 CLASS zcl_14_customer_service IMPLEMENTATION.
 
-    method customer_exists.
+  METHOD filter_existing_customers.
+    SELECT
+    FROM /dmo/customer
+    FIELDS ( customer_id )
+    FOR ALL ENTRIES IN @it_customer_ids
+    WHERE customer_id = @it_customer_ids-table_line
+    INTO TABLE @rt_valid_ids.
 
-    select single
-    from /dmo/customer
-    fields customer_id
-    where customer_id = @iv_customer_id
-    into @data(lt_customers).
-
-    rv_exists = xsdbool( sy-subrc = 0 ).
-
-    endmethod.
+  ENDMETHOD.
 
 ENDCLASS.

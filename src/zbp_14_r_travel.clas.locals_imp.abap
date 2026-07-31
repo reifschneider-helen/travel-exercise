@@ -176,14 +176,20 @@ CLASS lhc_Travel IMPLEMENTATION.
     WITH CORRESPONDING #( keys )
     RESULT DATA(lt_travels).
 
-    DATA(lo_customer) = NEW zcl_14_customer_service(  ).
+    DATA lt_customer_ids TYPE zcl_14_customer_service=>tt_customer_ids.
 
+    lt_customer_ids = VALUE #( FOR <ls_travel_entity> IN lt_travels
+                                        WHERE ( CustomerID IS NOT INITIAL )
+                                    (
+                                        <ls_travel_entity>-CustomerID
+                                     ) ).
+    DATA(lt_valid_customers) = NEW zcl_14_customer_service( )->filter_existing_customers( lt_customer_ids ).
 
     LOOP AT lt_travels ASSIGNING FIELD-SYMBOL(<ls_travel>).
       APPEND VALUE #( %tky = <ls_travel>-%tky
                       %state_area = c_state_area_customer ) TO reported-travel.
 
-      IF lo_customer->customer_exists( <ls_travel>-CustomerId ) = abap_false.
+      IF NOT line_exists( lt_valid_customers[ table_line = <ls_travel>-CustomerID ] ).
 
         APPEND VALUE #( %tky = <ls_travel>-%tky ) TO failed-travel.
 
