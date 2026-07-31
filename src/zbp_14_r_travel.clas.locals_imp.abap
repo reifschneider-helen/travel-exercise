@@ -181,7 +181,7 @@ CLASS lhc_Travel IMPLEMENTATION.
     lt_customer_ids = VALUE #( FOR <ls_travel_entity> IN lt_travels
                                         WHERE ( CustomerID IS NOT INITIAL )
                                     (
-                                        <ls_travel_entity>-CustomerID
+                                        customer_id = <ls_travel_entity>-CustomerID
                                      ) ).
     DATA(lt_valid_customers) = NEW zcl_14_customer_service( )->filter_existing_customers( lt_customer_ids ).
 
@@ -189,7 +189,7 @@ CLASS lhc_Travel IMPLEMENTATION.
       APPEND VALUE #( %tky = <ls_travel>-%tky
                       %state_area = c_state_area_customer ) TO reported-travel.
 
-      IF NOT line_exists( lt_valid_customers[ table_line = <ls_travel>-CustomerID ] ).
+      IF NOT line_exists( lt_valid_customers[ customer_id = <ls_travel>-CustomerID ] ).
 
         APPEND VALUE #( %tky = <ls_travel>-%tky ) TO failed-travel.
 

@@ -5,7 +5,11 @@ CLASS zcl_14_customer_service DEFINITION
 
   PUBLIC SECTION.
     TYPES:
-        tt_customer_ids TYPE STANDARD TABLE OF /dmo/customer_id WITH DEFAULT KEY.
+        BEGIN OF ty_customer_id,
+            customer_id TYPE /dmo/customer_id,
+        END OF ty_customer_id,
+
+        tt_customer_ids TYPE STANDARD TABLE OF ty_customer_id WITH DEFAULT KEY.
 
     METHODS:
       filter_existing_customers IMPORTING it_customer_ids     TYPE tt_customer_ids
@@ -23,7 +27,7 @@ CLASS zcl_14_customer_service IMPLEMENTATION.
     FROM /dmo/customer
     FIELDS ( customer_id )
     FOR ALL ENTRIES IN @it_customer_ids
-    WHERE customer_id = @it_customer_ids-table_line
+    WHERE customer_id = @it_customer_ids-customer_id
     INTO TABLE @rt_valid_ids.
 
   ENDMETHOD.
